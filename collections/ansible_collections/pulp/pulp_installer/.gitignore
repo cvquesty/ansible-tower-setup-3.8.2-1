@@ -1,0 +1,9 @@
+/*.retry
+.tox
+**/*.pyc
+/roles/geerlingguy.postgresql
+/vagrant/playbooks/roles/geerlingguy.postgresql
+local.*-config.yml
+
+# Ignores for Vagrant related items
+.vagrant/

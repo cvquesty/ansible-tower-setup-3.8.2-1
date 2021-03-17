@@ -1,0 +1,40 @@
+# yamllint disable-file
+# Ansible playbook to create the pulp service containers image
+---
+- hosts: localhost
+  gather_facts: false
+  vars_files:
+    - vars/main.yaml
+  tasks:
+    - name: Generate Containerfile from template
+      template:
+        src: ../molecule/scenario_resources/Dockerfile.j2
+        dest: "Containerfile_{{ item.name | replace('-', '') }}"
+      with_items: "{{ molecule_images }}"
+
+    - name: Log into DockerHub
+      docker_login:
+        username: pulpbot
+        password: "{{ lookup('env','DOCKER_BOT_PASSWORD') }}"
+
+    - name: Build molecule image
+      docker_image:
+        name: "molecule_{{ item.name | replace('-', '') }}"
+        tag: latest
+        build:
+          path: "."
+          dockerfile: "Containerfile_{{ item.name | replace('-', '') }}"
+          nocache: "{{ not cache | default(true) | bool }}"
+          pull: false
+        state: present
+        source: build
+      with_items: "{{ molecule_images }}"
+
+    - name: Push molecule image
+      docker_image:
+        name: "molecule_{{ item.name | replace('-', '') }}"
+        repository: "docker.io/pulp/molecule_{{ item.name | replace('-', '') }}"
+        tag: latest
+        push: true
+        source: local
+      with_items: "{{ molecule_images }}"

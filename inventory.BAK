@@ -1,0 +1,45 @@
+[tower]
+tower2.9c61.internal
+tower3.9c61.internal
+tower1.9c61.internal
+
+#[instance_group_<NAME>]
+
+[isolated_group_MultiTierApp]
+control.9d93.example.opentlc.com
+
+[isolated_group_MultiTierApp:vars]
+ansible_ssh_private_key_file='~/.ssh/provision_key.pem'
+ansible_user='devops'
+controller=tower
+
+[automationhub]
+
+[database]
+db2.9c61.internal
+
+[all:vars]
+ansible_become=true
+admin_password="Redhat1"
+
+pg_host='db2.9c61.internal'
+pg_port='5432'
+
+pg_database='awx'
+pg_username='awx'
+pg_password='Redhat1'
+pg_sslmode='prefer'  # set to 'verify-full' for client-side enforced SSL
+
+# SSL-related variables
+
+# If set, this will install a custom CA certificate to the system trust store.
+# custom_ca_cert=/path/to/ca.crt
+
+# Certificate and key to install in nginx for the web UI and API
+# web_server_ssl_cert=/path/to/tower.cert
+# web_server_ssl_key=/path/to/tower.key
+
+# Server-side SSL settings for PostgreSQL (when we are installing it).
+# postgres_use_ssl=False
+# postgres_ssl_cert=/path/to/pgsql.crt
+# postgres_ssl_key=/path/to/pgsql.key
